@@ -1,24 +1,24 @@
 import os
-import datetime
 import pymysql
 
-# get username from Cloud9 workspace
-# modify this variable if running on another environment
+# Get the username from the Cloud9 workspace
+# (modify this variable if running on another environment)
 username = os.getenv('C9_USER')
 
-# connect to a database
+# Connect to the database
 connection = pymysql.connect(host='localhost',
-                            user=username,
-                            password='',
-                            db='Chinook')
-
+                             user=username,
+                             password='',
+                             db='Chinook')
 try:
-    # Run the query
     with connection.cursor() as cursor:
-        row = ("Bob", 21, "1990-02-06 23:04:06")
-        cursor.execute("INSERT INTO Friends VALUES (%s, %s, %s);", row)
-        connection.commit()
+        list_of_names = ['fred', 'Fred']
+        # Prepare a string with same number of placeholders as in list_of_names
+        format_strings = ','.join(['%s'] * len(list_of_names))
+        cursor.execute(
+            "DELETE FROM Friends WHERE name in ({});".format(format_strings),
+            list_of_names)
 
+        connection.commit()
 finally:
-    # Close the connection, regardless of wether the above was successful
     connection.close()
